@@ -110,7 +110,32 @@ module.exports = function (app) {
     }
   );
     }
-  });
+  })
   //    res.redirect('/b/'+inputs.board)
 
+    .get(function (req, res){
+    var board = req.params.board;
+    var inputs = req.query;
+        console.log(inputs)
+    if(!inputs.thread_id){
+      res.send("please fill out required fields")
+    }
+    Message.find({_id: inputs.thread_id}, {
+      board: 0,
+      type: 0,
+      reported: 0,
+      delete_password: 0,
+      "replies.reported": 0,
+      "replies.delete_password": 0
+      }, 
+      { }, 
+      function(err, post) {
+        if (err) {
+        res.send(err);
+      } else {
+      res.send(post);
+      }
+});
+    });
+  
 };

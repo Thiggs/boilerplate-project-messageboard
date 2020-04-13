@@ -46,7 +46,7 @@ suite('Functional Tests', function() {
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.isArray(res.body);
-          assert.isBelow(res.body.length, 10);
+          assert.isAtMost(res.body.length, 10);
           assert.property(res.body[0], '_id');
           assert.property(res.body[0], 'replies');
           assert.property(res.body[0], 'text');
@@ -95,7 +95,23 @@ suite('Functional Tests', function() {
     });
     
     suite('GET', function() {
-      
+         test('No filter', function(done) {
+        chai.request(server)
+        .get('/api/replies/test')
+        .query({thread_id: "5e94b2080130415bbca15ad2"})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.isArray(res.body);
+          assert.property(res.body[0], '_id');
+          assert.property(res.body[0], 'replies');
+          assert.property(res.body[0], 'text');
+          assert.property(res.body[0], 'created_on');
+          assert.property(res.body[0], 'bumped_on');
+          assert.notProperty(res.body[0], 'reported');
+          assert.notProperty(res.body[0], 'delete_password');
+          done();
+        });
+      }); 
     });
     
     suite('PUT', function() {
