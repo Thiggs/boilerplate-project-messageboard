@@ -13,11 +13,12 @@ var MongoClient = require('mongodb');
 var ObjectId = require('mongodb').ObjectID;
 const mongoose = require("mongoose");
 
-mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 var Schema = mongoose.Schema;
 
 var messageSchema = new Schema({
+  type: String,
   text: String,
   created_on: Date,
   bumped_on: Date,
@@ -39,6 +40,7 @@ module.exports = function (app) {
     }
     else{
       var message=new Message({
+  type: "post",
   text: inputs.text,
   created_on: Date.now(),
   bumped_on: Date.now(),
@@ -51,10 +53,28 @@ module.exports = function (app) {
       res.send(message)
   }
   })
+  
+  .get(function (req, res){
+    Message.find({type:"post"}, {
+      type: 0,
+      reported: 0,
+      delete_password: 0,
+      replies: { $slice: -3 },
+      "replies.reported": 0,
+      "replies.delete_password": 0
+      }, 
+      { sort: { 'bumped_on' : -1 }, limit: 10 }, 
+      function(err, post) {
+        if (err) {
+        res.send(err);
+      } else {
+      res.send(post);
+      }
+});
+    });
     
   app.route('/api/replies/:board')
   .post(function (req, res){
-    console.log("here")
       var board = req.params.board;
       var inputs = req.body;
        if(!inputs.text||!inputs.delete_password||!inputs.thread_id){
@@ -62,6 +82,7 @@ module.exports = function (app) {
     }
     else{
   var reply=new Message({
+  type: "reply",
   text: inputs.text,
   created_on: Date.now(),
   bumped_on: Date.now(),
@@ -79,7 +100,6 @@ module.exports = function (app) {
       if (err) {
         res.send(err);
       } else {
-        console.log(result)
         res.send(result);
       }
     }

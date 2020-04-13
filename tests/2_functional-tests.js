@@ -40,7 +40,23 @@ suite('Functional Tests', function() {
    
     
     suite('GET', function() {
-      
+           test('No filter', function(done) {
+        chai.request(server)
+        .get('/api/threads/test')
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.isArray(res.body);
+          assert.equal(res.body.length, 10);
+          assert.property(res.body[0], '_id');
+          assert.property(res.body[0], 'replies');
+          assert.property(res.body[0], 'text');
+          assert.property(res.body[0], 'created_on');
+          assert.property(res.body[0], 'bumped_on');
+          assert.notProperty(res.body[0], 'reported');
+          assert.notProperty(res.body[0], 'delete_password');
+          done();
+        });
+      }); 
     });
     
     suite('DELETE', function() {
@@ -63,7 +79,7 @@ suite('Functional Tests', function() {
         .send({
           text: 'this is a reply',
           delete_password: 'supersecretpassword',
-         thread_id: "5e949c870b5130251a529362"
+         thread_id: "5e94b2080130415bbca15ad2"
         })
         .end(function(err, res){
   //       expect(res).to.redirectTo('/api/threads/b/test')
