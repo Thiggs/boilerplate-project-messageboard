@@ -46,7 +46,7 @@ suite('Functional Tests', function() {
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.isArray(res.body);
-          assert.equal(res.body.length, 10);
+          assert.isBelow(res.body.length, 10);
           assert.property(res.body[0], '_id');
           assert.property(res.body[0], 'replies');
           assert.property(res.body[0], 'text');

@@ -18,6 +18,7 @@ mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: tr
 var Schema = mongoose.Schema;
 
 var messageSchema = new Schema({
+  board: String,
   type: String,
   text: String,
   created_on: Date,
@@ -40,6 +41,7 @@ module.exports = function (app) {
     }
     else{
       var message=new Message({
+  board: board,
   type: "post",
   text: inputs.text,
   created_on: Date.now(),
@@ -55,7 +57,9 @@ module.exports = function (app) {
   })
   
   .get(function (req, res){
-    Message.find({type:"post"}, {
+    var board = req.params.board;
+    Message.find({board: board, type:"post"}, {
+      board: 0,
       type: 0,
       reported: 0,
       delete_password: 0,
@@ -82,6 +86,7 @@ module.exports = function (app) {
     }
     else{
   var reply=new Message({
+  board: board,
   type: "reply",
   text: inputs.text,
   created_on: Date.now(),
