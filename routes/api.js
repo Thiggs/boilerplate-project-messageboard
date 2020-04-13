@@ -75,7 +75,27 @@ module.exports = function (app) {
       res.send(post);
       }
 });
-    });
+    })
+  
+  .put(function (req, res){
+        var board = req.params.board;
+    var inputs = req.query;
+    if(!inputs.thread_id){
+      res.send("please fill out required fields")
+    }
+    else{
+      Message.findByIdAndUpdate(inputs.thread_id, {
+        reported: true,
+      }, {new: true}, 
+      function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send("success");
+      }
+    }); 
+    }
+  });
     
   app.route('/api/replies/:board')
   .post(function (req, res){
@@ -107,8 +127,7 @@ module.exports = function (app) {
       } else {
         res.send(result);
       }
-    }
-  );
+    });
     }
   })
   //    res.redirect('/b/'+inputs.board)
@@ -116,10 +135,10 @@ module.exports = function (app) {
     .get(function (req, res){
     var board = req.params.board;
     var inputs = req.query;
-        console.log(inputs)
     if(!inputs.thread_id){
       res.send("please fill out required fields")
     }
+    else{
     Message.find({_id: inputs.thread_id}, {
       board: 0,
       type: 0,
@@ -136,6 +155,7 @@ module.exports = function (app) {
       res.send(post);
       }
 });
+    }
     });
   
 };

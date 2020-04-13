@@ -40,7 +40,7 @@ suite('Functional Tests', function() {
    
     
     suite('GET', function() {
-           test('No filter', function(done) {
+      test('No filter', function(done) {
         chai.request(server)
         .get('/api/threads/test')
         .end(function(err, res){
@@ -64,16 +64,24 @@ suite('Functional Tests', function() {
     });
     
     suite('PUT', function() {
-      
-    });
+     test('No filter', function(done) {
+        chai.request(server)
+        .put('/api/threads/test')
+        .query({thread_id: "5e94b2080130415bbca15ad2"})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "success")
+          done();
+        });
+      });
     
 
   });
-  
+  });
   suite('API ROUTING FOR /api/replies/:board/', function() {
     
     suite('POST', function() {
-                 test('Message is updated', function(done) {
+      test('Message is updated', function(done) {
        chai.request(server)
         .post('/api/replies/test')
         .send({
