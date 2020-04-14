@@ -181,5 +181,27 @@ module.exports = function (app) {
       }
     }); 
     }
+  })
+      .delete(function (req, res){
+    var board = req.params.board;
+    var inputs = req.query;
+    if(!inputs.thread_id||!inputs.reply_id||!inputs.delete_password){
+      res.send("please fill out required fields")
+    }
+    else{
+      Message.updateOne({"_id": inputs.thread_id, "replies._id":inputs.reply_id, "delete_password": inputs.delete_password}, 
+                     {$set: {replies: ["deleted"]}},
+                     {}, function(err,result){
+        if(err){console.log(err)}
+      })
+      Message.findOneAndDelete({_id: inputs.reply_id, delete_password: inputs.delete_password},
+      function(err, result) {
+      if (err) {
+        res.send("incorrect password");
+      } else {
+        res.send("success");
+      }
+    }); 
+    }
   });
 };

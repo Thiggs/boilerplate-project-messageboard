@@ -136,7 +136,17 @@ suite('Functional Tests', function() {
     });
     
     suite('DELETE', function() {
-      
+        test('No filter', function(done) {
+        chai.request(server)
+        .delete('/api/replies/test')
+        .query({thread_id: "5e94b2080130415bbca15ad2", 
+                reply_id: "5e94b2080130415bbca15ad3", delete_password: "supersecretpassword"})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "success")
+          done();
+        });
+      });
     });
     
   });
