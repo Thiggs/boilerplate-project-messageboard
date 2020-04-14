@@ -123,7 +123,16 @@ suite('Functional Tests', function() {
     });
     
     suite('PUT', function() {
-      
+           test('No filter', function(done) {
+        chai.request(server)
+        .put('/api/replies/test')
+        .query({thread_id: "5e94b2080130415bbca15ad2", reply_id: "5e94b2080130415bbca15ad3"})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "success")
+          done();
+        });
+      });
     });
     
     suite('DELETE', function() {

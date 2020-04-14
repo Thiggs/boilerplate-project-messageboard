@@ -156,6 +156,30 @@ module.exports = function (app) {
       }
 });
     }
-    });
+    })
   
+    .put(function (req, res){
+    var board = req.params.board;
+    var inputs = req.query;
+    if(!inputs.thread_id||!inputs.reply_id){
+      res.send("please fill out required fields")
+    }
+    else{
+      Message.updateOne({"_id": inputs.thread_id, "replies._id":inputs.reply_id}, 
+                     {$set: {'replies.$.reported':'true'}},
+                     {}, function(err,result){
+        if(err){console.log (err)}
+      })
+      Message.findByIdAndUpdate(inputs.reply_id, {
+        reported: true,
+      }, {new: true}, 
+      function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send("success");
+      }
+    }); 
+    }
+  });
 };
